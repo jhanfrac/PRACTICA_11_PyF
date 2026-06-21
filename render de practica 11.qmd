@@ -1,0 +1,872 @@
+---
+title: "PRACTICA 11"
+format: html
+---
+
+PROBLEMA 1. NÚMERO DE POTREROS (4 puntos)
+Una finca ganadera maneja pasto Brachiaria brizantha bajo pastoreo rotacional.
+Datos:
+•	Período de ocupación = 5 días
+•	Período de descanso = 35 días
+Se pide:
+a) Determinar el número de potreros necesarios.
+b) Si durante la época seca el período de descanso aumenta a 42 días, calcular el nuevo número de potreros.
+c) Explicar cuál de los dos sistemas favorecería una mejor recuperación del pasto.
+
+```{r}
+# 1. DEFINICIÓN DE VARIABLES Y CÁLCULOS -----------------------------------
+
+# Escenario A: Época Lluviosa / Normal
+PO_a <- 5   # Período de ocupación (días)
+PD_a <- 35  # Período de descanso (días)
+NP_a <- (PD_a / PO_a) + 1
+
+# Escenario B: Época Seca
+PO_b <- 5   # Período de ocupación (días)
+PD_b <- 42  # Período de descanso (días)
+# Se aplica ceiling() para redondear hacia arriba al entero más cercano
+NP_b <- ceiling((PD_b / PO_b) + 1) 
+
+
+# 2. MOSTRAR FORMULAS Y EJERCICIOS EN CONSOLA -----------------------------
+
+cat("=========================================================================\n")
+cat("                PROBLEMA 1. NÚMERO DE POTREROS\n")
+cat("=========================================================================\n\n")
+
+cat("FÓRMULA GENERAL:\n")
+cat("  Número de potreros (NP) = (Días de descanso / Días de ocupación) + 1\n")
+cat("-------------------------------------------------------------------------\n\n")
+```
+
+# a) Determinar el número de potreros necesarios.
+
+```{r}
+# Desarrollo del literal a)
+cat("a) Determinar el número de potreros necesarios (Época Normal):\n")
+cat(paste("   Datos: PO =", PO_a, "días | PD =", PD_a, "días\n"))
+cat(paste("   NP = (", PD_a, "/", PO_a, ") + 1\n"))
+cat(paste("   NP = ", (PD_a / PO_a), " + 1\n"))
+cat(paste("   NP =", NP_a, "potreros\n\n"))
+```
+
+# b) Si durante la época seca el período de descanso aumenta a 42 días, calcular el nuevo número de potreros.
+
+```{r}
+cat("b) Si durante la época seca el período de descanso aumenta a 42 días,\n")
+cat("   calcular el nuevo número de potreros:\n")
+cat(paste("   Datos: PO =", PO_b, "días | Nuevo PD =", PD_b, "días\n"))
+cat(paste("   NP = (", PD_b, "/", PO_b, ") + 1\n"))
+cat(paste("   NP = ", (PD_b / PO_b), " + 1\n"))
+cat(paste("   NP = ", ((PD_b / PO_b) + 1), " -> Se redondea hacia arriba (ceiling)\n"))
+cat(paste("   NP =", NP_b, "potreros\n"))
+cat("   (Nota técnica: Se redondea a 10 potreros para garantizar que el periodo\n")
+cat("   de descanso real no caiga por debajo del mínimo biológico requerido).\n\n")
+```
+
+# c) Explicar cuál de los dos sistemas favorecería una mejor recuperación del pasto.
+
+```{r}
+cat("c) Explicación de cuál de los dos sistemas favorecería una mejor recuperación:\n")
+cat("   El sistema de 10 potreros con 42 días de descanso favorece una mejor\n")
+cat("   recuperación del pasto. De acuerdo con la Primera Ley de Voisin (Ley del\n")
+cat("   Descanso), el pastizal necesita un intervalo de tiempo suficiente entre\n")
+cat("   pastoreos sucesivos para acumular las reservas de carbohidratos necesarias\n")
+cat("   en sus raíces y bases de tallos, permitiendo un rebrote vigoroso. Durante\n")
+cat("   la época seca, los procesos de crecimiento vegetal se ralentizan debido a\n")
+cat("   la escasez de agua, por lo cual ampliar el descanso a 42 días es indispensable\n")
+cat("   para evitar la degradación de la pradera.\n")
+cat("=========================================================================\n\n")
+```
+
+
+```{r}
+# Instalar ggplot2 si no está instalado, y cargar la librería
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear el data frame con los datos para graficar
+datos_potreros <- data.frame(
+  Escenario = c("Época Normal\n(35 días descanso)", "Época Seca\n(42 días descanso)"),
+  Potreros = c(NP_a, NP_b),
+  Color = c("#2E7D32", "#EF6C00")
+)
+
+# Crear el gráfico con ggplot2
+grafico <- ggplot(datos_potreros, aes(x = Escenario, y = Potreros, fill = Escenario)) +
+  geom_bar(stat = "identity", width = 0.5, color = "black", show.legend = FALSE) +
+  geom_text(aes(label = paste(Potreros, "Potreros")), vjust = -0.5, fontface = "bold", size = 5) +
+  scale_fill_manual(values = datos_potreros$Color) +
+  labs(
+    title = "Comparación del Número de Potreros Necesarios",
+    subtitle = "Impacto del incremento del Período de Descanso (PO = 5 días)",
+    x = "Escenario Estacional",
+    y = "Número Total de Potreros (NP)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, color = "gray30"),
+    axis.text = element_text(color = "black"),
+    panel.grid.major.x = element_blank()
+  ) +
+  ylim(0, 12)
+
+# Desplegar el gráfico
+print(grafico)
+```
+
+PROBLEMA 2. CAPACIDAD DE CARGA (4 puntos)
+Una hectárea de pasto estrella africana produce 15 000 kg de forraje verde por ciclo.
+Datos:
+•	Producción de forraje verde = 15 000 kg/ha
+•	Aprovechamiento = 70%
+•	Peso promedio animal = 450 kg
+•	Período de descanso = 30 días
+Se pide:
+a) Calcular el consumo diario de un animal.
+b) Determinar la capacidad de carga (animales/ha).
+c) Indicar cuántos animales podrían mantenerse en 12 ha de pastura.
+
+```{r}
+# -------------------------------------------------------------------------
+# PROGRAMA: CÁLCULO DE CAPACIDAD DE CARGA Y CARGA TOTAL EN LA FINCA
+# -------------------------------------------------------------------------
+
+# 1. DEFINICIÓN DE VARIABLES Y CÁLCULOS -----------------------------------
+
+PFV <- 15000       # Producción de Forraje Verde (kg/ha)
+Aprovechamiento <- 0.70  # Porcentaje utilizable (70%)
+Peso_animal <- 450 # Peso promedio del animal (kg)
+PD <- 30           # Período de descanso (días)
+Hectareas <- 12    # Superficie total de la pradera (ha)
+
+# a) Consumo diario por animal (10% del peso vivo)
+Consumo_diario <- Peso_animal * 0.10
+
+# b) Capacidad de carga (Número de Animales por hectárea)
+Forraje_disponible <- PFV * Aprovechamiento
+Consumo_periodo <- Consumo_diario * PD
+NA_ha <- Forraje_disponible / Consumo_periodo
+
+# c) Total de animales en la superficie dada
+Total_animales_exacto <- NA_ha * Hectareas
+Total_animales_real <- floor(Total_animales_exacto) # Redondeo hacia abajo (conservador)
+
+
+# 2. MOSTRAR FORMULAS Y EJERCICIOS EN CONSOLA -----------------------------
+
+cat("=========================================================================\n")
+cat("                PROBLEMA 2. CAPACIDAD DE CARGA\n")
+cat("=========================================================================\n\n")
+
+cat("METODOLOGÍA Y FÓRMULAS:\n")
+cat("  1. Consumo diario = Peso promedio animal * 10%\n")
+cat("  2. NA/ha = (PFV * Porcentaje utilizable) / (Consumo diario * PD)\n")
+cat("  3. Total animales = NA/ha * Hectáreas totales\n")
+cat("-------------------------------------------------------------------------\n\n")
+
+# Desarrollo del literal a)
+cat("a) Calcular el consumo diario de un animal:\n")
+cat(paste("   Datos: Peso promedio =", Peso_animal, "kg | Tasa de consumo = 10%\n"))
+cat(paste("   Consumo diario =", Peso_animal, "kg * 0.10\n"))
+cat(paste("   Consumo diario =", Consumo_diario, "kg de forraje verde/día\n\n"))
+
+# Desarrollo del literal b)
+cat("b) Determinar la capacidad de carga (animales/ha):\n")
+cat(paste("   Datos: PFV =", PFV, "kg/ha | Aprovechamiento =", Aprovechamiento * 100, "% | PD =", PD, "días\n"))
+cat(paste("   NA/ha = (", PFV, "*", Aprovechamiento, ") / (", Consumo_diario, "*", PD, ")\n"))
+cat(paste("   NA/ha =", Forraje_disponible, "/", Consumo_periodo, "\n"))
+cat(paste("   NA/ha =", round(NA_ha, 2), "animales/ha\n\n"))
+
+# Desarrollo del literal c)
+cat("c) Indicar cuántos animales podrían mantenerse en 12 ha de pastura:\n")
+cat(paste("   Datos: Capacidad de carga =", round(NA_ha, 2), "animales/ha | Superficie =", Hectareas, "ha\n"))
+cat(paste("   Total de animales =", round(NA_ha, 2), "*", Hectareas, "\n"))
+cat(paste("   Total de animales =", round(Total_animales_exacto, 2), "-> En la práctica =", Total_animales_real, "animales\n"))
+cat("   (Nota técnica: Se trunca o redondea hacia abajo para evitar sobrepastoreo\n")
+cat("   y asegurar que el recurso forrajero sea suficiente para todo el lote).\n")
+cat("=========================================================================\n\n")
+
+
+# 3. GENERACIÓN DEL GRÁFICO (PROYECCIÓN DE ANIMALES POR HECTÁREA) ---------
+
+# Instalar ggplot2 si no está instalado
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un set de datos dinámico para ver cómo escala el número de animales según las ha
+proyeccion_finca <- data.frame(
+  Ha = 0:15,
+  Animales = (0:15) * NA_ha
+)
+
+# Gráfico de línea de capacidad biológica con punto objetivo en 12 ha
+grafico_carga <- ggplot(proyeccion_finca, aes(x = Ha, y = Animales)) +
+  geom_line(color = "#2E7D32", size = 1.2) + # Línea verde de capacidad
+  geom_area(fill = "#2E7D32", alpha = 0.1) + # Zona segura de pastoreo
+  geom_point(aes(x = Hectareas, y = Total_animales_exacto), color = "#C62828", size = 4) + # Punto de las 12 ha
+  geom_text(aes(x = Hectareas, y = Total_animales_exacto, 
+                label = paste(Total_animales_real, "Animales\nen 12 Ha")), 
+            vjust = -1, hjust = 0.5, fontface = "bold", color = "#C62828") +
+  labs(
+    title = "Relación entre Superficie de Pastura y Capacidad de Carga",
+    subtitle = paste("Basado en una capacidad óptima de", round(NA_ha, 2), "animales/ha"),
+    x = "Superficie de la Pastura (Hectáreas)",
+    y = "Número Total de Animales Soportados"
+  ) +
+  scale_x_continuous(breaks = seq(0, 15, by = 2)) +
+  scale_y_continuous(breaks = seq(0, 120, by = 20)) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", color = "black"),
+    plot.subtitle = element_text(color = "gray30"),
+    panel.grid.minor = element_blank()
+  )
+
+# Desplegar el gráfico en RStudio
+print(grafico_carga)
+```
+
+PROBLEMA 3. ÁREA DE POTREROS (4 puntos)
+Un productor dispone de:
+•	40 novillos
+•	Peso promedio = 350 kg
+•	Sistema rotacional
+•	Período de ocupación = 6 días
+•	Producción disponible = 2 500 kg MS/ha
+Se pide:
+a) Calcular el consumo diario por animal.
+b) Calcular el consumo diario total del lote.
+c) Determinar el requerimiento de forraje para el período de ocupación.
+d) Determinar el área necesaria de cada potrero.
+
+```{r}
+
+# PROGRAMA: CÁLCULO DE ÁREA DE POTREROS (BASADO EN MATERIA SECA - MS)
+
+# 1. DEFINICIÓN DE VARIABLES Y CÁLCULOS 
+
+Num_animales <- 40       # Número de novillos
+Peso_promedio <- 350     # Peso promedio por animal (kg)
+PO <- 6                  # Período de ocupación (días)
+Prod_disponible <- 2500  # Producción disponible (kg MS/ha)
+
+# a) Consumo diario por animal (3% del Peso Vivo en Materia Seca)
+Consumo_diario_MS <- Peso_promedio * 0.03
+
+# b) Consumo diario total del lote
+Consumo_total_lote_dia <- Num_animales * Consumo_diario_MS
+
+# c) Requerimiento de forraje para todo el período de ocupación
+Requerimiento_periodo <- Consumo_total_lote_dia * PO
+
+# d) Área necesaria de cada potrero (en hectáreas)
+Area_potrero <- Requerimiento_periodo / Prod_disponible
+
+
+# 2. MOSTRAR FORMULAS Y EJERCICIOS EN CONSOLA -----------------------------
+
+cat("=========================================================================\n")
+cat("                PROBLEMA 3. ÁREA DE POTREROS\n")
+cat("=========================================================================\n\n")
+
+cat("METODOLOGÍA Y FÓRMULAS (Sección Materia Seca - MS):\n")
+cat("  1. Consumo diario MS = Peso Vivo * 3%\n")
+cat("  2. Consumo diario total lote = Número de animales * Consumo diario MS\n")
+cat("  3. Requerimiento del período = Consumo diario total lote * PO\n")
+cat("  4. Área de cada potrero = Requerimiento del período / Producción disponible ha\n")
+cat("-------------------------------------------------------------------------\n\n")
+
+# Desarrollo del literal a)
+cat("a) Calcular el consumo diario por animal:\n")
+cat(paste("   Datos: Peso promedio =", Peso_promedio, "kg | Tasa de consumo MS = 3%\n"))
+cat(paste("   Consumo diario =", Peso_promedio, "kg * 0.03\n"))
+cat(paste("   Consumo diario =", Consumo_diario_MS, "kg MS/animal/día\n\n"))
+
+# Desarrollo del literal b)
+cat("b) Calcular el consumo diario total del lote:\n")
+cat(paste("   Datos: Número de animales =", Num_animales, "| Consumo diario MS =", Consumo_diario_MS, "kg\n"))
+cat(paste("   Consumo total diario del lote =", Num_animales, "animales *", Consumo_diario_MS, "kg MS/día\n"))
+cat(paste("   Consumo total diario del lote =", Consumo_total_lote_dia, "kg MS/día\n\n"))
+
+# Desarrollo del literal c)
+cat("c) Determinar el requerimiento de forraje para el período de ocupación:\n")
+cat(paste("   Datos: Consumo diario lote =", Consumo_total_lote_dia, "kg MS/día | PO =", PO, "días\n"))
+cat(paste("   Requerimiento del período =", Consumo_total_lote_dia, "kg MS/día *", PO, "días\n"))
+cat(paste("   Requerimiento del período =", Requerimiento_periodo, "kg MS\n\n"))
+
+# Desarrollo del literal d)
+cat("d) Determinar el área necesaria de cada potrero:\n")
+cat(paste("   Datos: Requerimiento =", Requerimiento_periodo, "kg MS | Producción por ha =", Prod_disponible, "kg MS/ha\n"))
+cat(paste("   Área de cada potrero =", Requerimiento_periodo, "kg MS /", Prod_disponible, "kg MS/ha\n"))
+cat(paste("   Área de cada potrero =", round(Area_potrero, 3), "ha\n"))
+cat("   (Nota técnica: El lote requiere una superficie ligeramente mayor a una\n")
+cat("   hectárea estándar para cubrir la demanda forrajera de los 6 días de ocupación).\n")
+cat("=========================================================================\n\n")
+
+
+# 3. GENERACIÓN DEL GRÁFICO (PRESUPUESTO FORRAJERO VS OFERTA) ------------
+
+# Instalar ggplot2 si no está instalado
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear set de datos para comparar la Oferta Estándar (1 ha) vs Demanda Real
+datos_balance <- data.frame(
+  Concepto = c("Oferta Estándar\nde 1 Hectárea", "Demanda del Lote\n(6 días ocupación)"),
+  Materia_Seca = c(Prod_disponible, Requerimiento_periodo),
+  Tipo = c("Oferta", "Demanda")
+)
+
+# Crear el gráfico
+grafico_balance <- ggplot(datos_balance, aes(x = Concepto, y = Materia_Seca, fill = Tipo)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black", show.legend = FALSE) +
+  geom_text(aes(label = paste(Materia_Seca, "kg MS")), vjust = -0.5, fontface = "bold", size = 5) +
+  scale_fill_manual(values = c("Oferta" = "#2E7D32", "Demanda" = "#D32F2F")) + # Verde vs Rojo
+  labs(
+    title = "Balance Forrajero: Oferta por Ha vs Demanda del Lote",
+    subtitle = paste("Área mínima requerida por potrero =", round(Area_potrero, 3), "hectáreas"),
+    x = "",
+    y = "Materia Seca Total (kg MS)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, color = "gray30"),
+    axis.text = element_text(color = "black", face = "bold"),
+    panel.grid.major.x = element_blank()
+  ) +
+  ylim(0, 3000)
+
+# Desplegar el gráfico en RStudio
+print(grafico_balance)
+```
+
+PROBLEMA 4. DISEÑO COMPLETO DEL SISTEMA (4 puntos)
+Una explotación ganadera planea implementar un sistema rotacional utilizando pasto Mombaza.
+Datos:
+•	60 animales
+•	Peso promedio = 400 kg
+•	Producción de forraje = 3 000 kg MS/ha
+•	Período de ocupación = 4 días
+•	Período de descanso = 32 días
+Se pide:
+a) Consumo diario por animal.
+b) Consumo diario del lote.
+c) Requerimiento total durante el período de ocupación.
+d) Área de cada potrero.
+e) Número de potreros.
+f) Área total requerida para el sistema.
+
+```{r}
+# PROGRAMA: DISEÑO COMPLETO DEL SISTEMA DE PASTOREO ROTACIONAL (VOISIN)
+
+# 1. DEFINICIÓN DE VARIABLES INICIALES 
+
+Num_animales   <- 60    # Número de animales (novillos)
+Peso_promedio  <- 400   # Peso promedio por animal (kg)
+Prod_disponible <- 3000  # Producción de forraje disponible (kg MS/ha)
+PO             <- 4     # Período de ocupación (días)
+PD             <- 32    # Período de descanso (días)
+
+
+# 2. CÁLCULOS DEL SISTEMA DE PASTOREO -------------------------------------
+
+# a) Consumo diario por animal (3% del Peso Vivo en Materia Seca - MS)
+Consumo_diario_MS <- Peso_promedio * 0.03
+
+# b) Consumo diario total del lote
+Consumo_lote_dia <- Num_animales * Consumo_diario_MS
+
+# c) Requerimiento total durante el período de ocupación
+Requerimiento_periodo <- Consumo_lote_dia * PO
+
+# d) Área de cada potrero (en hectáreas)
+Area_potrero <- Requerimiento_periodo / Prod_disponible
+
+# e) Número de potreros necesarios
+NP <- (PD / PO) + 1
+
+# f) Área total requerida para el sistema de rotación completo
+Area_total <- NP * Area_potrero
+
+
+# 3. MOSTRAR FORMULAS Y DESARROLLO EN CONSOLA ----------------------------
+
+cat("=========================================================================\n")
+cat("            PROBLEMA 4. DISEÑO COMPLETO DEL SISTEMA (VOISIN)\n")
+cat("=========================================================================\n\n")
+
+cat("DATOS DE ENTRADA:\n")
+cat(paste("  - Número de animales :", Num_animales, "novillos\n"))
+cat(paste("  - Peso promedio      :", Peso_promedio, "kg\n"))
+cat(paste("  - Rendimiento pasto  :", Prod_disponible, "kg MS/ha\n"))
+cat(paste("  - Periodo Ocupación  :", PO, "días\n"))
+cat(paste("  - Periodo Descanso   :", PD, "días\n"))
+cat("-------------------------------------------------------------------------\n\n")
+
+# Literal a)
+cat("a) Consumo diario por animal (en Materia Seca - MS):\n")
+cat("   Fórmula: Consumo diario = Peso promedio * 3%\n")
+cat(paste("   Desarrollo: Consumo diario =", Peso_promedio, "kg * 0.03\n"))
+cat(paste("   Resultado: =", Consumo_diario_MS, "kg MS/animal/día\n\n"))
+
+# Literal b)
+cat("b) Consumo diario del lote:\n")
+cat("   Fórmula: Consumo lote diario = Número de animales * Consumo diario por animal\n")
+cat(paste("   Desarrollo: Consumo lote diario =", Num_animales, "animales *", Consumo_diario_MS, "kg MS/día\n"))
+cat(paste("   Resultado: =", Consumo_lote_dia, "kg MS/día\n\n"))
+
+# Literal c)
+cat("c) Requerimiento total durante el período de ocupación:\n")
+cat("   Fórmula: Requerimiento del período = Consumo diario del lote * Período de Ocupación (PO)\n")
+cat(paste("   Desarrollo: Requerimiento del período =", Consumo_lote_dia, "kg MS/día *", PO, "días\n"))
+cat(paste("   Resultado: =", Requerimiento_periodo, "kg MS\n\n"))
+
+# Literal d)
+cat("d) Área de cada potrero:\n")
+cat("   Fórmula: Área de cada potrero = Requerimiento del período / Producción disponible por Ha\n")
+cat(paste("   Desarrollo: Área de cada potrero =", Requerimiento_periodo, "kg MS /", Prod_disponible, "kg MS/ha\n"))
+cat(paste("   Resultado: =", round(Area_potrero, 2), "ha\n\n"))
+
+# Literal e)
+cat("e) Número de potreros:\n")
+cat("   Fórmula: NP = (Días de descanso / Días de ocupación) + 1\n")
+cat(paste("   Desarrollo: NP = (", PD, "/", PO, ") + 1 = ", (PD / PO), " + 1\n"))
+cat(paste("   Resultado: =", NP, "potreros\n\n"))
+
+# Literal f)
+cat("f) Área total requerida para el sistema:\n")
+cat("   Fórmula: Área total = Número de potreros * Área de cada potrero\n")
+cat(paste("   Desarrollo: Área total =", NP, "potreros *", round(Area_potrero, 2), "ha/potrero\n"))
+cat(paste("   Resultado: =", round(Area_total, 2), "ha\n"))
+cat("=========================================================================\n\n")
+
+
+# 4. GENERACIÓN DE LA VISUALIZACIÓN GRÁFICA DEL SISTEMA -------------------
+
+# Instalar y cargar ggplot2 si es necesario
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un set de datos representando la distribución del terreno (Matriz 3x3 para 9 potreros)
+grid_potreros <- expand.grid(X = 1:3, Y = 1:3)
+grid_potreros$ID <- 1:9
+
+# Definimos que el Potrero 1 está ocupado y el resto en descanso
+grid_potreros$Estado <- ifelse(grid_potreros$ID == 1, 
+                               paste0("Ocupado (", PO, " días)"), 
+                               paste0("Descanso (", PD, " días)"))
+
+# Generar el gráfico de distribución espacial
+grafico_sistema <- ggplot(grid_potreros, aes(x = X, y = Y, fill = Estado)) +
+  geom_tile(color = "white", size = 2, show.legend = TRUE) +
+  # Etiquetas de texto dentro de cada celda/potrero
+  geom_text(aes(label = paste("Potrero", ID, "\n", round(Area_potrero, 2), "Ha")), 
+            color = "black", fontface = "bold", size = 4.5) +
+  # Paleta de colores biológicos
+  scale_fill_manual(values = c("Ocupado (4 días)" = "#E53935",    # Rojo vivo para ocupación/pastoreo activo
+                               "Descanso (32 días)" = "#A5D6A7")) # Verde suave para recuperación foliar
+  labs(
+    title = "Diseño Espacial y Dinámica del Sistema de Pastoreo",
+    subtitle = paste("Sistema completo de", round(Area_total, 2), "Ha | 9 potreros de", round(Area_potrero, 2), "Ha c/u"),
+    caption = "Nota: El ganado rota consecutivamente de potrero en potrero cumpliendo con las Leyes de Voisin.",
+    x = "Distribución Análoga Horizontal",
+    y = "Distribución Análoga Vertical"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "gray30"),
+    plot.caption = element_text(face = "italic", color = "gray40", size = 10),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    axis.text = element_blank(),     # Ocultar coordenadas para emular un mapa real
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    axis.title = element_blank()
+  )
+
+# Desplegar el mapa en RStudio
+print(grafico_sistema)
+```
+
+PROBLEMA 5. ANÁLISIS TÉCNICO Y TOMA DE DECISIONES (4 puntos)
+Lea cuidadosamente los siguientes casos y responda.
+Caso A
+Un productor mantiene 70 bovinos en una pastura de 20 ha.
+La capacidad de carga calculada para dicha pastura es de 2.5 animales/ha.
+Preguntas
+1.	¿Cuál es la capacidad máxima de animales que soporta la finca?
+2.	¿Existe sobrepastoreo o subpastoreo?
+3.	¿Qué consecuencias tendría esta situación?
+
+Caso B
+Un sistema rotacional presenta:
+•	Período de ocupación = 10 días
+•	Período de descanso = 20 días
+Preguntas
+1.	¿El período de ocupación es adecuado según las recomendaciones técnicas?
+2.	¿Qué problemas podrían presentarse en la persistencia de la pastura?
+3.	¿Qué cambios recomendaría?
+
+# Caso A
+```{r}
+# -------------------------------------------------------------------------
+# PROGRAMA: CASO A - ANÁLISIS DE CAPACIDAD DE CARGA Y DIAGNÓSTICO
+# -------------------------------------------------------------------------
+
+# 1. DEFINICIÓN DE VARIABLES INICIALES ------------------------------------
+
+Bovinos_actuales     <- 70   # Número de animales actuales en la finca
+Area_finca           <- 20   # Superficie total de la pastura (ha)
+Capacidad_carga_calc <- 2.5  # Capacidad de carga óptima calculada (animales/ha)
+
+
+# 2. CÁLCULO DE CAPACIDAD MÁXIMA Y BALANCE --------------------------------
+
+# Capacidad máxima que soporta la finca
+Capacidad_maxima <- Area_finca * Capacidad_carga_calc
+
+# Determinación de la condición de pastoreo
+Diferencia <- Capacidad_maxima - Bovinos_actuales
+
+Diagnostico <- if (Bovinos_actuales < Capacidad_maxima) {
+  "SUBPASTOREO"
+} else if (Bovinos_actuales > Capacidad_maxima) {
+  "SOBREPASTOREO"
+} else {
+  "CARGA ÓPTIMA (EQUILIBRIO)"
+}
+
+
+# 3. IMPRESIÓN DE FÓRMULAS, DESARROLLO Y ANÁLISIS TÉCNICO -----------------
+
+cat("=========================================================================\n")
+cat("      PROBLEMA 5 - CASO A: ANÁLISIS DE CAPACIDAD DE CARGA Y DIAGNÓSTICO  \n")
+cat("=========================================================================\n\n")
+
+cat("DATOS DE ENTRADA:\n")
+cat(paste("  - Bovinos actuales en la finca   :", Bovinos_actuales, "bovinos\n"))
+cat(paste("  - Superficie total de la finca   :", Area_finca, "ha\n"))
+cat(paste("  - Capacidad de carga referencial :", Capacidad_carga_calc, "animales/ha\n"))
+cat("-------------------------------------------------------------------------\n\n")
+
+# Pregunta 1
+cat("¿Cuál es la capacidad máxima de animales que soporta la finca?\n")
+cat("   Fórmula: Capacidad Máxima = Área (ha) * Capacidad de carga (animales/ha)\n")
+cat(paste("   Desarrollo: Capacidad Máxima =", Area_finca, "ha *", Capacidad_carga_calc, "animales/ha\n"))
+cat(paste("   Resultado: =", Capacidad_maxima, "animales\n\n"))
+
+# Pregunta 2
+cat("¿Existe sobrepastoreo o subpastoreo?\n")
+cat(paste("   Diagnóstico: ¡Existe", Diagnostico, "!\n"))
+cat(paste("   Justificación: La finca tiene capacidad para", Capacidad_maxima, "animales,\n"))
+cat(paste("   pero actualmente solo se mantienen", Bovinos_actuales, "animales.\n"))
+cat(paste("   Tenemos un margen subutilizado de", Diferencia, "animales.\n\n"))
+
+# Pregunta 3
+cat("¿Qué consecuencias tendría esta situación?\n")
+cat("   Al tener menos animales de los óptimos, gran parte del forraje no será\n")
+cat("   consumido a tiempo. Esto provocará que las plantas alcancen etapas\n")
+cat("   maduras avanzadas, se vuelvan leñosas y aumente su grado de lignificación,\n")
+cat("   lo que reduce drásticamente su calidad nutritiva y su digestibilidad.\n")
+cat("   Adicionalmente, se genera un desperdicio del recurso forrajero y una\n")
+cat("   utilización ineficiente de la tierra.\n")
+cat("=========================================================================\n\n")
+
+
+# 4. GENERACIÓN DE LA GRÁFICA COMPARATIVA DE CARGA -----------------------
+
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear dataset para la comparación
+datos_carga <- data.frame(
+  Categoria = c("Carga Actual", "Capacidad Máxima Soportable"),
+  Animales  = c(Bovinos_actuales, Capacidad_maxima),
+  Color     = c("#FF9800", "#1B5E20") # Naranja para actual, Verde para límite
+)
+
+# Generar gráfico de barras de balance
+grafico_caso_a <- ggplot(datos_carga, aes(x = Categoria, y = Animales, fill = Categoria)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black", show.legend = FALSE) +
+  geom_text(aes(label = paste(Animales, "Animales")), vjust = -0.5, fontface = "bold", size = 5) +
+  scale_fill_manual(values = datos_carga$Color) +
+  labs(
+    title = "Balance de Carga Animal en la Finca",
+    subtitle = paste("Diagnóstico:", Diagnostico, "(Margen libre de", Diferencia, "animales)"),
+    x = "",
+    y = "Número Total de Animales"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#C62828", face = "bold"),
+    axis.text = element_text(color = "black", face = "bold"),
+    panel.grid.major.x = element_blank()
+  ) +
+  ylim(0, 200)
+
+# Imprimir gráfico
+print(grafico_caso_a)
+```
+
+# Caso B
+
+```{r}
+# -------------------------------------------------------------------------
+# PROGRAMA: CASO B - EVALUACIÓN DEL SISTEMA ROTACIONAL Y RECOMENDACIONES
+# -------------------------------------------------------------------------
+
+# 1. DEFINICIÓN DE VARIABLES INICIALES ------------------------------------
+
+PO_actual   <- 10   # Período de ocupación actual (días)
+PD_actual   <- 20   # Período de descanso actual (días)
+
+# Recomendación técnica propuesta
+PO_propuesto <- 4   # Período de ocupación recomendado (días)
+PD_propuesto <- 20   # Período de descanso recomendado (días)
+
+
+# 2. CÁLCULO DE NÚMERO DE POTREROS (ACTUAL VS RECOMENDADO) ----------------
+
+# Sistema Actual
+NP_actual <- (PD_actual / PO_actual) + 1
+
+# Sistema Propuesto
+NP_propuesto <- (PD_propuesto / PO_propuesto) + 1
+
+
+# 3. IMPRESIÓN DE FÓRMULAS, DESARROLLO Y ANÁLISIS TÉCNICO -----------------
+
+cat("=========================================================================\n")
+cat("      PROBLEMA 5 - CASO B: EVALUACIÓN DE ROTACIÓN Y LEYES DE VOISIN      \n")
+cat("=========================================================================\n\n")
+
+cat("DATOS DEL SISTEMA ACTUAL:\n")
+cat(paste("  - Período de Ocupación (PO) :", PO_actual, "días\n"))
+cat(paste("  - Período de Descanso (PD)  :", PD_actual, "días\n"))
+cat(paste("  - Número de Potreros (NP)   :", NP_actual, "potreros\n"))
+cat("-------------------------------------------------------------------------\n\n")
+
+# Pregunta 1
+cat("¿El período de ocupación es adecuado según las recomendaciones técnicas?\n")
+cat(paste("   Evaluación: ¡NO ES ADECUADO! El período de ocupación actual es de", PO_actual, "días.\n"))
+cat("   Justificación: Técnicamente, el período de ocupación ideal debe oscilar\n")
+cat("   entre 3 y 7 días, con una recomendación estricta de no exceder los 4 días\n")
+cat("   (máximo 6) para evitar el consumo de rebrotes. Un periodo de 10 días es excesivo.\n\n")
+
+# Pregunta 2
+cat("¿Qué problemas podrían presentarse en la persistencia de la pastura?\n")
+cat("   Se viola la SEGUNDA LEY DE VOISIN (Ley de la Ocupación).\n")
+cat("   Al permanecer 10 días en el mismo potrero, los animales consumirán de nuevo\n")
+cat("   los brotes tiernos que comenzaron a crecer a partir del 5° o 6° día de ocupación.\n")
+cat("   Morder los rebrotes sucesivos agota las reservas de carbohidratos en la raíz,\n")
+cat("   lo que reduce la productividad y destruye la persistencia de la pastura.\n\n")
+
+# Pregunta 3
+cat("¿Qué cambios recomendaría?\n")
+cat("   1. Reducir el período de ocupación a un rango aceptable (ej: 4 días).\n")
+cat("   2. Ajustar el número de potreros para mantener un descanso adecuado.\n")
+cat("   Fórmula de Reestructuración:\n")
+cat("      NP = (Días de Descanso / Días de Ocupación) + 1\n")
+cat(paste("      NP = (", PD_propuesto, "/", PO_propuesto, ") + 1 = ", (PD_propuesto / PO_propuesto), " + 1\n"))
+cat(paste("      Resultado Recomendado =", NP_propuesto, "potreros (Redistribución del sistema)\n"))
+cat("=========================================================================\n\n")
+
+
+# 4. GENERACIÓN DE LA GRÁFICA COMPARATIVA DE SISTEMAS --------------------
+
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear dataset comparativo
+datos_sistema <- data.frame(
+  Sistema = c("Sistema Actual\n(PO = 10 días)", "Sistema Recomendado\n(PO = 4 días)"),
+  Potreros = c(NP_actual, NP_propuesto),
+  Tipo = c("Deficiente (Riesgo)", "Técnicamente Eficiente")
+)
+
+# Generar gráfico de barras
+grafico_caso_b <- ggplot(datos_sistema, aes(x = Sistema, y = Potreros, fill = Tipo)) +
+  geom_bar(stat = "identity", width = 0.5, color = "black") +
+  geom_text(aes(label = paste(Potreros, "Potreros")), vjust = -0.5, fontface = "bold", size = 5) +
+  scale_fill_manual(values = c("Deficiente (Riesgo)" = "#D32F2F", "Técnicamente Eficiente" = "#2E7D32")) +
+  labs(
+    title = "Reestructuración del Sistema Rotacional",
+    subtitle = "Número de Potreros necesarios para cumplir con las Leyes de Voisin",
+    x = "",
+    y = "Número de Potreros Necesarios (NP)",
+    fill = "Estado Técnico"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+    plot.subtitle = element_text(size = 11, hjust = 0.5, color = "gray30"),
+    legend.position = "bottom",
+    axis.text = element_text(color = "black", face = "bold"),
+    panel.grid.major.x = element_blank()
+  ) +
+  ylim(0, 8)
+
+# Imprimir gráfico
+print(grafico_caso_b)
+```
+
+PREGUNTA INTEGRADORA (BONO: 2 puntos)
+Un productor cuenta con:
+•	50 vacunos
+•	Peso promedio = 500 kg
+•	Producción de forraje = 18 000 kg FV/ha
+•	Descanso = 36 días
+•	Ocupación = 4 días
+Determine:
+1.	Capacidad de carga (animales/ha).
+2.	Número de potreros.
+3.	Área total requerida para sostener el sistema.
+Interprete los resultados y emita una recomendación técnica para mejorar la eficiencia del sistema de pastoreo.
+
+```{r}
+
+# PROGRAMA: RESOLUCIÓN - PREGUNTA INTEGRADORA (BONO)
+
+
+# 1. DEFINICIÓN DE VARIABLES DE ENTRADA 
+
+Vacunos          <- 50     # Número de vacunos en el lote
+Peso_promedio    <- 500    # Peso promedio de cada animal (kg)
+PFV              <- 18000  # Producción de Forraje Verde (kg FV/ha)
+PD               <- 36     # Período de descanso (días)
+PO               <- 4      # Período de ocupación (días)
+Aprovechamiento  <- 0.70   # Porcentaje utilizable (70%)
+
+
+# 2. CÁLCULOS TÉCNICOS INTEGRALES ----------------------------------------
+
+# a) Consumo diario de un animal (10% de su peso vivo en forraje verde)
+Consumo_diario_FV <- Peso_promedio * 0.10
+
+# b) Capacidad de carga (animales/ha)
+Forraje_utilizable_ha <- PFV * Aprovechamiento
+Consumo_por_ciclo_ha  <- Consumo_diario_FV * PD
+Capacidad_carga       <- Forraje_utilizable_ha / Consumo_por_ciclo_ha
+
+# c) Número de potreros necesarios
+NP <- (PD / PO) + 1
+
+# d) Área de cada potrero
+Consumo_diario_lote   <- Vacunos * Consumo_diario_FV
+Requerimiento_periodo <- Consumo_diario_lote * PO
+Area_potrero          <- Requerimiento_periodo / Forraje_utilizable_ha
+
+# e) Área total requerida para sostener el sistema
+Area_total_sistema <- NP * Area_potrero
+
+
+# 3. MOSTRAR FORMULAS Y DESARROLLO PASO A PASO EN LA CONSOLA -------------
+
+cat("=========================================================================\n")
+cat("                PREGUNTA INTEGRADORA (BONO: 2 PUNTOS)                    \n")
+cat("=========================================================================\n\n")
+
+cat("DATOS ORIGINALES DEL PROBLEMA:\n")
+cat(paste("  - Tamaño del lote        :", Vacunos, "vacunos\n"))
+cat(paste("  - Peso promedio animal   :", Peso_promedio, "kg\n"))
+cat(paste("  - Rendimiento Pasto (FV) :", PFV, "kg FV/ha\n"))
+cat(paste("  - Período de Descanso (PD) :", PD, "días\n"))
+cat(paste("  - Período de Ocupación(PO) :", PO, "días\n"))
+cat(paste("  - Aprovechamiento        :", Aprovechamiento * 100, "%\n"))
+cat("-------------------------------------------------------------------------\n\n")
+
+# Paso 1: Consumo diario por animal
+cat("1. DETERMINACIÓN DEL CONSUMO DIARIO POR ANIMAL:\n")
+cat("   Fórmula: Consumo diario = Peso promedio * 10%\n")
+cat(paste("   Desarrollo: Consumo diario =", Peso_promedio, "kg * 0.10\n"))
+cat(paste("   Resultado: =", Consumo_diario_FV, "kg FV/animal/día\n\n"))
+
+# Paso 2: Capacidad de carga
+cat("2. CÁLCULO DE LA CAPACIDAD DE CARGA BIOLÓGICA:\n")
+cat("   Fórmula: NA/ha = (PFV * Aprovechamiento) / (Consumo diario * PD)\n")
+cat(paste("   Desarrollo: NA/ha = (", PFV, "*", Aprovechamiento, ") / (", Consumo_diario_FV, "*", PD, ")\n"))
+cat(paste("   Desarrollo: NA/ha =", Forraje_utilizable_ha, "/", Consumo_por_ciclo_ha, "\n"))
+cat(paste("   Resultado: =", round(Capacidad_carga, 2), "animales/ha\n\n"))
+
+# Paso 3: Número de potreros
+cat("3. CÁLCULO DEL NÚMERO DE POTREROS NECESARIOS:\n")
+cat("   Fórmula: NP = (Días de Descanso / Días de Ocupación) + 1\n")
+cat(paste("   Desarrollo: NP = (", PD, "/", PO, ") + 1 = ", (PD / PO), " + 1\n"))
+cat(paste("   Resultado: =", NP, "potreros\n\n"))
+
+# Paso 4: Área de cada potrero
+cat("4. DETERMINACIÓN DEL ÁREA DE CADA POTRERO:\n")
+cat("   a) Consumo diario del lote = Vacunos * Consumo diario individual\n")
+cat(paste("      Consumo diario del lote =", Vacunos, "animales *", Consumo_diario_FV, "kg FV/día =", Consumo_diario_lote, "kg FV/día\n"))
+cat("   b) Requerimiento del período = Consumo lote * PO\n")
+cat(paste("      Requerimiento del período =", Consumo_diario_lote, "kg *", PO, "días =", Requerimiento_periodo, "kg FV\n"))
+cat("   c) Área de cada potrero = Requerimiento del período / Forraje utilizable por Ha\n")
+cat(paste("      Área de cada potrero =", Requerimiento_periodo, "kg /", Forraje_utilizable_ha, "kg FV/ha\n"))
+cat(paste("      Resultado: =", round(Area_potrero, 5), "ha (aprox.", round(Area_potrero, 2), "ha)\n\n"))
+
+# Paso 5: Área total requerida
+cat("5. ÁREA TOTAL REQUERIDA PARA EL SISTEMA COMPLETO:\n")
+cat("   Fórmula: Área total = Número de potreros * Área de cada potrero\n")
+cat(paste("   Desarrollo: Área total =", NP, "potreros *", round(Area_potrero, 5), "ha/potrero\n"))
+cat(paste("   Resultado: =", round(Area_total_sistema, 2), "ha\n"))
+cat("   ----------------------------------------------------------------------\n")
+cat("   Comprobación dinámica de carga del sistema:\n")
+cat(paste("   Área de pastoreo neto (9 potreros en descanso)  =", round((NP - 1) * Area_potrero, 2), "ha\n"))
+cat(paste("   Área de pastoreo activo (1 potrero en ocupación) =", round(Area_potrero, 2), "ha\n"))
+cat(paste("   Suma total dinámica del sistema                 =", round(Area_total_sistema, 2), "ha\n"))
+cat("=========================================================================\n\n")
+
+
+# 4. GENERACIÓN DE LA PLANIFICACIÓN DE ROTACIÓN (MAPA 2x5) ----------------
+
+# Instalar y cargar ggplot2 si es necesario
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un set de datos representando un mapa del terreno (Matriz 2 filas x 5 columnas = 10 potreros)
+grid_sistema <- expand.grid(Columna = 1:5, Fila = 1:2)
+grid_sistema$ID <- 1:10
+
+# Clasificación de estado: Potrero 1 en uso activo, el resto en recuperación biológica
+grid_sistema$Estado <- ifelse(grid_sistema$ID == 1, 
+                              paste0("En Ocupación (", PO, " días)"), 
+                              paste0("En Descanso (", PD, " días)"))
+
+# Generar el mapa del sistema rotacional de 10 potreros
+grafico_bono <- ggplot(grid_sistema, aes(x = Columna, y = Fila, fill = Estado)) +
+  geom_tile(color = "white", size = 2, show.legend = TRUE) +
+  # Etiquetas de texto con la información de cada potrero
+  geom_text(aes(label = paste("Potrero", ID, "\n", round(Area_potrero, 3), "Ha")), 
+            color = "black", fontface = "bold", size = 4) +
+  # Paleta de colores biológicos
+  scale_fill_manual(values = c("En Ocupación (4 días)" = "#E53935",    # Rojo de pastoreo activo
+                               "En Descanso (36 días)" = "#A5D6A7")) # Verde para descanso biológico
+  labs(
+    title = "Diseño de la Finca: Sistema Rotacional Voisin de 10 Potreros",
+    subtitle = paste("Área Total Requerida:", round(Area_total_sistema, 2), "Ha | Lote de", Vacunos, "Vacunos de", Peso_promedio, "kg"),
+    caption = "Nota: El ganado rota secuencialmente, respetando las leyes de reposo y preservación del suelo.",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+    plot.subtitle = element_text(size = 11, hjust = 0.5, color = "gray30"),
+    plot.caption = element_text(face = "italic", color = "gray40", size = 9),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    axis.text = element_blank(),     # Omitir coordenadas para simular un layout plano real
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+
+# Desplegar el mapa en RStudio
+print(grafico_bono)
+```
+
+
