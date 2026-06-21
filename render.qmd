@@ -1,8 +1,7 @@
 ---
-title: "PRACTICA 11"
+title: "practicaa 11"
 format: html
 ---
-
 PROBLEMA 1. NÚMERO DE POTREROS (4 puntos)
 Una finca ganadera maneja pasto Brachiaria brizantha bajo pastoreo rotacional.
 Datos:
